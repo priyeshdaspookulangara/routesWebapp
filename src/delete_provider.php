@@ -1,0 +1,24 @@
+<?php
+require_once 'db.php';
+$link = get_db_connection();
+
+header('Content-Type: application/json');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+
+    if ($id > 0) {
+        $sql = "DELETE FROM ad_providers WHERE id = $id";
+
+        if (mysqli_query($link, $sql)) {
+            echo json_encode(['success' => true, 'message' => 'Provider deleted successfully.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error deleting provider.']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Invalid provider ID.']);
+    }
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
+}
+?>

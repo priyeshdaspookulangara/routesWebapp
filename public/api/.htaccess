@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteRule ^routes/([0-9]+)/vehicles$ routes/vehicles.php?route_id=$1 [L]
+RewriteRule ^subscriptions/([0-9]+)$ subscriptions/index.php?id=$1 [L]
+RewriteRule ^complaints/([0-9]+)$ complaints/index.php?id=$1 [L]
+RewriteRule ^statistics/([0-9]+)$ statistics/index.php?id=$1 [L]
