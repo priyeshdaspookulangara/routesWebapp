@@ -12,9 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO ad_plans (name, price, duration) VALUES ('$name', $price, $duration)";
 
     if (mysqli_query($link, $sql)) {
-        echo json_encode(['success' => true, 'message' => 'Plan created successfully.']);
+        $last_id = mysqli_insert_id($link);
+        echo json_encode(['success' => true, 'message' => 'Plan created successfully.', 'data' => ['id' => $last_id, 'name' => $_POST['name'], 'price' => $_POST['price'], 'duration' => $_POST['duration']]]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error creating plan.']);
+        echo json_encode(['success' => false, 'message' => 'Error creating plan: ' . mysqli_error($link)]);
     }
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);

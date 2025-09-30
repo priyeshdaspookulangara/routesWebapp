@@ -97,26 +97,47 @@ $routes = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 <script>
 $(document).ready(function() {
+    console.log("Route management script loaded and document is ready.");
+
     // Add route
     $('#addRouteForm').on('submit', function(e) {
         e.preventDefault();
+        console.log("Add route form submitted.");
         $.ajax({
             url: '../../src/create_route.php',
             type: 'POST',
             data: $(this).serialize(),
             dataType: 'json',
             success: function(response) {
+                console.log("Add route response:", response);
                 if (response.success) {
-                    location.reload();
+                    $('#addRouteModal').modal('hide');
+                    $('#addRouteForm')[0].reset();
+                    var route = response.data;
+                    var newRow = `
+                        <tr id="route-${route.id}">
+                            <td>${route.id}</td>
+                            <td class="name">${route.name}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm edit-btn" data-id="${route.id}" data-name="${route.name}">Edit</button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="${route.id}">Delete</button>
+                            </td>
+                        </tr>`;
+                    $('#routesTable tbody').append(newRow);
                 } else {
-                    alert(response.message);
+                    console.error('Error: ' + response.message);
                 }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                console.error(jqXHR.responseText);
             }
         });
     });
 
     // Edit route - show modal
     $('#routesTable').on('click', '.edit-btn', function() {
+        console.log("Edit button clicked.");
         $('#edit-id').val($(this).data('id'));
         $('#edit-name').val($(this).data('name'));
         $('#editRouteModal').modal('show');
@@ -125,6 +146,7 @@ $(document).ready(function() {
     // Update route
     $('#editRouteForm').on('submit', function(e) {
         e.preventDefault();
+        console.log("Update route form submitted.");
         var formData = $(this).serialize();
         $.ajax({
             url: '../../src/update_route.php',
@@ -132,20 +154,26 @@ $(document).ready(function() {
             data: formData,
             dataType: 'json',
             success: function(response) {
+                console.log("Update route response:", response);
                 if (response.success) {
                     $('#editRouteModal').modal('hide');
                     var id = $('#edit-id').val();
                     var row = $('#route-' + id);
                     row.find('.name').text($('#edit-name').val());
                 } else {
-                    alert(response.message);
+                    console.error(response.message);
                 }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                console.error(jqXHR.responseText);
             }
         });
     });
 
     // Delete route
     $('#routesTable').on('click', '.delete-btn', function() {
+        console.log("Delete button clicked.");
         if (confirm('Are you sure you want to delete this route?')) {
             var id = $(this).data('id');
             $.ajax({
@@ -154,11 +182,16 @@ $(document).ready(function() {
                 data: { id: id },
                 dataType: 'json',
                 success: function(response) {
+                    console.log("Delete route response:", response);
                     if (response.success) {
                         $('#route-' + id).remove();
                     } else {
-                        alert(response.message);
+                        console.error(response.message);
                     }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                    console.error(jqXHR.responseText);
                 }
             });
         }

@@ -9,6 +9,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 require_once '../../src/db.php';
 $link = get_db_connection();
 
+
 $sql = "SELECT * FROM users";
 $result = mysqli_query($link, $sql);
 $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -140,26 +141,50 @@ $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 <script>
 $(document).ready(function() {
+    console.log("User management script loaded and document is ready.");
+
     // Add user
     $('#addUserForm').on('submit', function(e) {
         e.preventDefault();
+        console.log("Add user form submitted.");
         $.ajax({
             url: '../../src/create_user.php',
             type: 'POST',
             data: $(this).serialize(),
             dataType: 'json',
             success: function(response) {
+                console.log("Add user response:", response);
                 if (response.success) {
-                    location.reload();
+                    $('#addUserModal').modal('hide');
+                    $('#addUserForm')[0].reset();
+                    var user = response.data;
+                    var newRow = `
+                        <tr id="user-${user.id}">
+                            <td>${user.id}</td>
+                            <td class="name">${user.name}</td>
+                            <td class="email">${user.email}</td>
+                            <td class="role">${user.role}</td>
+                            <td class="status">${user.status}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm edit-btn" data-id="${user.id}" data-name="${user.name}" data-email="${user.email}" data-role="${user.role}" data-status="${user.status}">Edit</button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="${user.id}">Delete</button>
+                            </td>
+                        </tr>`;
+                    $('#usersTable tbody').append(newRow);
                 } else {
-                    alert(response.message);
+                    console.error('Error adding user: ' + response.message);
                 }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('AJAX error on add user: ' + textStatus + ' - ' + errorThrown);
+                console.error(jqXHR.responseText);
             }
         });
     });
 
     // Edit user - show modal
     $('#usersTable').on('click', '.edit-btn', function() {
+        console.log("Edit button clicked for user ID:", $(this).data('id'));
         $('#edit-id').val($(this).data('id'));
         $('#edit-name').val($(this).data('name'));
         $('#edit-email').val($(this).data('email'));
@@ -171,6 +196,7 @@ $(document).ready(function() {
     // Update user
     $('#editUserForm').on('submit', function(e) {
         e.preventDefault();
+        console.log("Update user form submitted.");
         var formData = $(this).serialize();
         $.ajax({
             url: '../../src/update_user.php',
@@ -178,6 +204,7 @@ $(document).ready(function() {
             data: formData,
             dataType: 'json',
             success: function(response) {
+                console.log("Update user response:", response);
                 if (response.success) {
                     $('#editUserModal').modal('hide');
                     var id = $('#edit-id').val();
@@ -187,14 +214,19 @@ $(document).ready(function() {
                     row.find('.role').text($('#edit-role').val());
                     row.find('.status').text($('#edit-status').val());
                 } else {
-                    alert(response.message);
+                    console.error('Error updating user: ' + response.message);
                 }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('AJAX error on update user: ' + textStatus + ' - ' + errorThrown);
+                console.error(jqXHR.responseText);
             }
         });
     });
 
     // Delete user
     $('#usersTable').on('click', '.delete-btn', function() {
+        console.log("Delete button clicked for user ID:", $(this).data('id'));
         if (confirm('Are you sure you want to delete this user?')) {
             var id = $(this).data('id');
             $.ajax({
@@ -203,11 +235,16 @@ $(document).ready(function() {
                 data: { id: id },
                 dataType: 'json',
                 success: function(response) {
+                    console.log("Delete user response:", response);
                     if (response.success) {
                         $('#user-' + id).remove();
                     } else {
-                        alert(response.message);
+                        console.error('Error deleting user: ' + response.message);
                     }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('AJAX error on delete user: ' + textStatus + ' - ' + errorThrown);
+                    console.error(jqXHR.responseText);
                 }
             });
         }

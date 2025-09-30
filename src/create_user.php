@@ -13,9 +13,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO users (name, email, password, role) VALUES ('$name', '$email', '$password', '$role')";
 
     if (mysqli_query($link, $sql)) {
-        echo json_encode(['success' => true, 'message' => 'User created successfully.']);
+        $last_id = mysqli_insert_id($link);
+        echo json_encode(['success' => true, 'message' => 'User created successfully.', 'data' => ['id' => $last_id, 'name' => $_POST['name'], 'email' => $_POST['email'], 'role' => $_POST['role'], 'status' => 'Active']]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error creating user.']);
+        echo json_encode(['success' => false, 'message' => 'Error creating user: ' . mysqli_error($link)]);
     }
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);

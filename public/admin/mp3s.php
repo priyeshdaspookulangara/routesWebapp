@@ -27,9 +27,17 @@ $mp3s = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 <div class="container mt-5">
     <h2>MP3 Management</h2>
-    <form action="../../src/upload_mp3.php" method="post" enctype="multipart/form-data" class="mb-3">
+    <form action="../../src/upload_mp3.php" method="post" enctype="multipart/form-data" class="mb-3 border p-3">
         <div class="form-group">
-            <label>Upload MP3 File</label>
+            <label>Title</label>
+            <input type="text" name="title" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Artist / Advertiser</label>
+            <input type="text" name="artist" class="form-control">
+        </div>
+        <div class="form-group">
+            <label>MP3 File</label>
             <input type="file" name="mp3_file" class="form-control-file" required>
         </div>
         <button type="submit" class="btn btn-primary">Upload</button>
@@ -39,6 +47,8 @@ $mp3s = mysqli_fetch_all($result, MYSQLI_ASSOC);
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Title</th>
+                <th>Artist</th>
                 <th>Filename</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -48,6 +58,8 @@ $mp3s = mysqli_fetch_all($result, MYSQLI_ASSOC);
             <?php foreach ($mp3s as $mp3): ?>
             <tr id="mp3-<?php echo $mp3['id']; ?>">
                 <td><?php echo $mp3['id']; ?></td>
+                <td><?php echo htmlspecialchars($mp3['title']); ?></td>
+                <td><?php echo htmlspecialchars($mp3['artist']); ?></td>
                 <td><a href="../uploads/mp3/<?php echo htmlspecialchars($mp3['filename']); ?>" target="_blank"><?php echo htmlspecialchars($mp3['filename']); ?></a></td>
                 <td class="status"><?php echo htmlspecialchars($mp3['status']); ?></td>
                 <td>

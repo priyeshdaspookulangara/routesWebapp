@@ -123,6 +123,8 @@ CREATE TABLE `subscriptions` (
 DROP TABLE IF EXISTS `mp3_files`;
 CREATE TABLE `mp3_files` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `artist` varchar(255) DEFAULT NULL,
   `filename` varchar(255) NOT NULL,
   `status` enum('Pending','Approved') NOT NULL DEFAULT 'Pending',
   `uploaded_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -166,6 +168,59 @@ CREATE TABLE `complaint_replies` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `complaint_replies_ibfk_1` FOREIGN KEY (`complaint_id`) REFERENCES `complaints` (`id`) ON DELETE CASCADE,
   CONSTRAINT `complaint_replies_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+--
+-- Table structure for table `playlists`
+--
+
+DROP TABLE IF EXISTS `playlists`;
+CREATE TABLE `playlists` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `route_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `route_id` (`route_id`),
+  CONSTRAINT `playlists_ibfk_1` FOREIGN KEY (`route_id`) REFERENCES `routes` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+--
+-- Table structure for table `playlist_items`
+--
+
+DROP TABLE IF EXISTS `playlist_items`;
+CREATE TABLE `playlist_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `playlist_id` int(11) NOT NULL,
+  `mp3_id` int(11) NOT NULL,
+  `type` enum('song','ad') NOT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `playlist_id` (`playlist_id`),
+  KEY `mp3_id` (`mp3_id`),
+  CONSTRAINT `playlist_items_ibfk_1` FOREIGN KEY (`playlist_id`) REFERENCES `playlists` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `playlist_items_ibfk_2` FOREIGN KEY (`mp3_id`) REFERENCES `mp3_files` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+--
+-- Table structure for table `ad_plays`
+--
+
+DROP TABLE IF EXISTS `ad_plays`;
+CREATE TABLE `ad_plays` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mp3_id` int(11) NOT NULL,
+  `route_id` int(11) DEFAULT NULL,
+  `played_at` timestamp NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `mp3_id` (`mp3_id`),
+  KEY `route_id` (`route_id`),
+  CONSTRAINT `ad_plays_ibfk_1` FOREIGN KEY (`mp3_id`) REFERENCES `mp3_files` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ad_plays_ibfk_2` FOREIGN KEY (`route_id`) REFERENCES `routes` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

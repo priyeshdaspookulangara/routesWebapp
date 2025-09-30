@@ -10,9 +10,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO routes (name) VALUES ('$name')";
 
     if (mysqli_query($link, $sql)) {
-        echo json_encode(['success' => true, 'message' => 'Route created successfully.']);
+        $last_id = mysqli_insert_id($link);
+        echo json_encode(['success' => true, 'message' => 'Route created successfully.', 'data' => ['id' => $last_id, 'name' => $_POST['name']]]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error creating route.']);
+        echo json_encode(['success' => false, 'message' => 'Error creating route: ' . mysqli_error($link)]);
     }
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);

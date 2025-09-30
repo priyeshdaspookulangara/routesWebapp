@@ -130,26 +130,50 @@ $routes = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 <script>
 $(document).ready(function() {
+    console.log("Vehicle management script loaded and document is ready.");
+
     // Add vehicle
     $('#addVehicleForm').on('submit', function(e) {
         e.preventDefault();
+        console.log("Add vehicle form submitted.");
         $.ajax({
             url: '../../src/create_vehicle.php',
             type: 'POST',
             data: $(this).serialize(),
             dataType: 'json',
             success: function(response) {
+                console.log("Add vehicle response:", response);
                 if (response.success) {
-                    location.reload();
+                    $('#addVehicleModal').modal('hide');
+                    $('#addVehicleForm')[0].reset();
+                    var vehicle = response.data;
+                    var routeName = $('#addVehicleForm').find('select[name="route_id"] option:selected').text();
+                    var newRow = `
+                        <tr id="vehicle-${vehicle.id}">
+                            <td>${vehicle.id}</td>
+                            <td class="name">${vehicle.name}</td>
+                            <td class="route_name">${routeName}</td>
+                            <td class="status">${vehicle.status}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm edit-btn" data-id="${vehicle.id}" data-name="${vehicle.name}" data-route_id="${vehicle.route_id}" data-status="${vehicle.status}">Edit</button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="${vehicle.id}">Delete</button>
+                            </td>
+                        </tr>`;
+                    $('#vehiclesTable tbody').append(newRow);
                 } else {
-                    alert(response.message);
+                    console.error('Error: ' + response.message);
                 }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                console.error(jqXHR.responseText);
             }
         });
     });
 
     // Edit vehicle - show modal
     $('#vehiclesTable').on('click', '.edit-btn', function() {
+        console.log("Edit button clicked.");
         $('#edit-id').val($(this).data('id'));
         $('#edit-name').val($(this).data('name'));
         $('#edit-route_id').val($(this).data('route_id'));
@@ -160,6 +184,7 @@ $(document).ready(function() {
     // Update vehicle
     $('#editVehicleForm').on('submit', function(e) {
         e.preventDefault();
+        console.log("Update vehicle form submitted.");
         var formData = $(this).serialize();
         $.ajax({
             url: '../../src/update_vehicle.php',
@@ -167,6 +192,7 @@ $(document).ready(function() {
             data: formData,
             dataType: 'json',
             success: function(response) {
+                console.log("Update vehicle response:", response);
                 if (response.success) {
                     $('#editVehicleModal').modal('hide');
                     var id = $('#edit-id').val();
@@ -175,14 +201,19 @@ $(document).ready(function() {
                     row.find('.route_name').text($('#edit-route_id option:selected').text());
                     row.find('.status').text($('#edit-status').val());
                 } else {
-                    alert(response.message);
+                    console.error(response.message);
                 }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                console.error(jqXHR.responseText);
             }
         });
     });
 
     // Delete vehicle
     $('#vehiclesTable').on('click', '.delete-btn', function() {
+        console.log("Delete button clicked.");
         if (confirm('Are you sure you want to delete this vehicle?')) {
             var id = $(this).data('id');
             $.ajax({
@@ -191,11 +222,16 @@ $(document).ready(function() {
                 data: { id: id },
                 dataType: 'json',
                 success: function(response) {
+                    console.log("Delete vehicle response:", response);
                     if (response.success) {
                         $('#vehicle-' + id).remove();
                     } else {
-                        alert(response.message);
+                        console.error(response.message);
                     }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                    console.error(jqXHR.responseText);
                 }
             });
         }

@@ -11,9 +11,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO ad_providers (company_name, user_id) VALUES ('$company_name', $user_id)";
 
     if (mysqli_query($link, $sql)) {
-        echo json_encode(['success' => true, 'message' => 'Provider created successfully.']);
+        $last_id = mysqli_insert_id($link);
+        echo json_encode(['success' => true, 'message' => 'Provider created successfully.', 'data' => ['id' => $last_id, 'company_name' => $_POST['company_name'], 'user_id' => $_POST['user_id']]]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error creating provider.']);
+        echo json_encode(['success' => false, 'message' => 'Error creating provider: ' . mysqli_error($link)]);
     }
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);

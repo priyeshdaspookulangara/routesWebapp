@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            background-color: #f8f9fa;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #343a40;
+            color: white;
+            transition: all 0.3s;
+            z-index: 100;
+            padding-top: 56px; /* Height of the navbar */
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .sidebar-header h5,
+        .sidebar.collapsed .nav-link span {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-header,
+        .sidebar.collapsed .nav-link {
+            text-align: center;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1rem;
+            text-align: center;
+        }
+
+        .sidebar .nav-link {
+            color: #adb5bd;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+            color: white;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .sidebar .nav-link .fa-fw {
+            margin-right: 0.5rem;
+        }
+
+        .sidebar.collapsed .nav-link .fa-fw {
+            margin-right: 0;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 250px;
+            padding-top: 56px; /* Height of the navbar */
+            width: calc(100% - 250px);
+            transition: margin-left 0.3s;
+            padding-bottom: 3rem; /* Footer height */
+        }
+
+        .main-content.collapsed {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+
+        /* Top Navbar Styles */
+        .navbar {
+            z-index: 101; /* Higher than sidebar */
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: #e9ecef;
+            padding: 1rem 0;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: calc(100% - 250px);
+            transition: width 0.3s, margin-left 0.3s;
+            margin-left: 250px;
+        }
+
+        .footer.collapsed {
+            width: calc(100% - 80px);
+            margin-left: 80px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+            .sidebar .sidebar-header h5,
+            .sidebar .nav-link span {
+                display: none;
+            }
+            .sidebar .sidebar-header,
+            .sidebar .nav-link {
+                text-align: center;
+            }
+            .sidebar .nav-link .fa-fw {
+                margin-right: 0;
+            }
+            .main-content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+             .footer {
+                width: calc(100% - 80px);
+                margin-left: 80px;
+            }
+            /* Hide toggle button on small screens as sidebar is always collapsed */
+            #sidebar-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Collapsible Left Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h5>Admin Panel</h5>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt fa-fw"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-page="users">
+                    <i class="fas fa-users fa-fw"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-page="products">
+                    <i class="fas fa-box fa-fw"></i>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-page="settings">
+                    <i class="fas fa-cog fa-fw"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-page="reports">
+                    <i class="fas fa-chart-line fa-fw"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-content" id="main-content">
+        <!-- Top Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <!-- Sidebar Toggle Button -->
+                <button class="btn btn-primary" id="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Navbar Items on the right -->
+                <div class="d-flex ms-auto">
+                    <ul class="navbar-nav">
+                        <!-- Notifications Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="#" id="navbarDropdownNotifications" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bell"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownNotifications">
+                                <li><a class="dropdown-item" href="#">Notification 1</a></li>
+                                <li><a class="dropdown-item" href="#">Notification 2</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">View all</a></li>
+                            </ul>
+                        </li>
+                        <!-- User Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                                <li><a class="dropdown-item" href="#">Profile</a></li>
+                                <li><a class="dropdown-item" href="#">Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content Area -->
+        <div class="container-fluid mt-4">
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                </ol>
+            </nav>
+
+            <!-- Main Heading -->
+            <h1 class="h2 mb-4">Dashboard Overview</h1>
+
+            <!-- Placeholder Content Cards -->
+            <div class="row">
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <h5 class="card-title">New Users</h5>
+                            <p class="card-text fs-4">150</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h5 class="card-title">Sales</h5>
+                            <p class="card-text fs-4">$12,500</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <h5 class="card-title">Pending Orders</h5>
+                            <p class="card-text fs-4">25</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card text-white bg-danger">
+                        <div class="card-body">
+                            <h5 class="card-title">Open Tickets</h5>
+                            <p class="card-text fs-4">5</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Recent Activity
+                </div>
+                <div class="card-body">
+                    <p class="card-text">This is a placeholder for more detailed content, like a table or a chart, showing recent activities within the admin panel.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer" id="footer">
+            <div class="container">
+                <span>&copy; 2023 Your Company</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- Bootstrap 5 JS Bundle with Popper CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Sidebar toggle functionality
+            $('#sidebar-toggle').on('click', function() {
+                $('#sidebar').toggleClass('collapsed');
+                $('#main-content').toggleClass('collapsed');
+                $('#footer').toggleClass('collapsed');
+            });
+
+            // Dynamic sidebar link highlighting
+            // This is a simple example. In a real application, you'd parse the URL.
+            $('.sidebar .nav-link').on('click', function(e) {
+                e.preventDefault(); // Prevent navigation for this demo
+
+                // Remove active class from all links
+                $('.sidebar .nav-link').removeClass('active');
+
+                // Add active class to the clicked link
+                $(this).addClass('active');
+
+                // Update breadcrumb and heading for demonstration
+                let pageName = $(this).data('page');
+                let capitalizedPageName = pageName.charAt(0).toUpperCase() + pageName.slice(1);
+
+                $('.breadcrumb .breadcrumb-item.active').text(capitalizedPageName);
+                $('.main-content .h2').text(capitalizedPageName + ' Overview');
+            });
+        });
+    </script>
+</body>
+</html>

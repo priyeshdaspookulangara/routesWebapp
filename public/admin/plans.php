@@ -127,9 +127,23 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
-                    location.reload();
+                    $('#addPlanModal').modal('hide');
+                    $('#addPlanForm')[0].reset();
+                    var plan = response.data;
+                    var newRow = `
+                        <tr id="plan-${plan.id}">
+                            <td>${plan.id}</td>
+                            <td class="name">${plan.name}</td>
+                            <td class="price">${plan.price}</td>
+                            <td class="duration">${plan.duration}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm edit-btn" data-id="${plan.id}" data-name="${plan.name}" data-price="${plan.price}" data-duration="${plan.duration}">Edit</button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="${plan.id}">Delete</button>
+                            </td>
+                        </tr>`;
+                    $('#plansTable tbody').append(newRow);
                 } else {
-                    alert(response.message);
+                    alert('Error: ' + response.message);
                 }
             }
         });

@@ -26,6 +26,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             <li class="nav-item"><a class="nav-link" href="admin/plans.php">Ad Plans</a></li>
             <li class="nav-item"><a class="nav-link" href="admin/providers.php">Ad Providers</a></li>
             <li class="nav-item"><a class="nav-link" href="admin/mp3s.php">MP3s</a></li>
+            <li class="nav-item"><a class="nav-link" href="admin/playlists.php">Playlists</a></li>
+            <li class="nav-item"><a class="nav-link" href="admin/reports.php">Ad Reports</a></li>
+            <li class="nav-item"><a class="nav-link" href="admin/expiries.php">Subscription Expiries</a></li>
             <li class="nav-item"><a class="nav-link" href="admin/complaints.php">Complaints</a></li>
         </ul>
         <ul class="navbar-nav">

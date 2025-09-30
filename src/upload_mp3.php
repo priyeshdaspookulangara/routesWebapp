@@ -3,10 +3,14 @@ require_once 'db.php';
 $link = get_db_connection();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["mp3_file"])) {
+    $title = mysqli_real_escape_string($link, $_POST['title']);
+    $artist = mysqli_real_escape_string($link, $_POST['artist']);
+
     $target_dir = "../public/uploads/mp3/";
     if (!file_exists($target_dir)) {
         mkdir($target_dir, 0777, true);
     }
+
     $filename = basename($_FILES["mp3_file"]["name"]);
     $target_file = $target_dir . $filename;
     $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
@@ -24,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["mp3_file"])) {
     }
 
     if (move_uploaded_file($_FILES["mp3_file"]["tmp_name"], $target_file)) {
-        $sql = "INSERT INTO mp3_files (filename) VALUES ('" . mysqli_real_escape_string($link, $filename) . "')";
+        $sql = "INSERT INTO mp3_files (title, artist, filename) VALUES ('$title', '$artist', '" . mysqli_real_escape_string($link, $filename) . "')";
         if (mysqli_query($link, $sql)) {
             header("location: ../public/admin/mp3s.php");
         } else {

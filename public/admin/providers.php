@@ -129,9 +129,23 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
-                    location.reload();
+                    $('#addProviderModal').modal('hide');
+                    $('#addProviderForm')[0].reset();
+                    var provider = response.data;
+                    var userName = $('#addProviderForm').find('select[name="user_id"] option:selected').text();
+                    var newRow = `
+                        <tr id="provider-${provider.id}">
+                            <td>${provider.id}</td>
+                            <td class="company_name">${provider.company_name}</td>
+                            <td class="user_name">${userName}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm edit-btn" data-id="${provider.id}" data-company_name="${provider.company_name}" data-user_id="${provider.user_id}">Edit</button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="${provider.id}">Delete</button>
+                            </td>
+                        </tr>`;
+                    $('#providersTable tbody').append(newRow);
                 } else {
-                    alert(response.message);
+                    alert('Error: ' + response.message);
                 }
             }
         });
