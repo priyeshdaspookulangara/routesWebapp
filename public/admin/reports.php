@@ -48,86 +48,77 @@ $sql .= " ORDER BY ap.played_at DESC";
 
 $result_logs = mysqli_query($link, $sql);
 $ad_logs = mysqli_fetch_all($result_logs, MYSQLI_ASSOC);
+
+require_once 'includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ad Play Reports</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
+<div class="container-fluid">
+    <h2 class="h2 mb-4">Ad Play Reports</h2>
 
-<div class="container mt-5">
-    <h2>Ad Play Reports</h2>
-
-    <!-- Filter Form -->
-    <form action="reports.php" method="get" class="border p-3 mb-4">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="route_id">Filter by Route</label>
-                    <select name="route_id" id="route_id" class="form-control">
-                        <option value="">All Routes</option>
-                        <?php foreach ($routes as $route): ?>
-                            <option value="<?php echo $route['id']; ?>" <?php if ($filter_route_id == $route['id']) echo 'selected'; ?>>
-                                <?php echo htmlspecialchars($route['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+    <div class="card mb-4">
+        <div class="card-header">Filter Report</div>
+        <div class="card-body">
+            <form action="reports.php" method="get">
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label for="route_id" class="form-label">Filter by Route</label>
+                        <select name="route_id" id="route_id" class="form-select">
+                            <option value="">All Routes</option>
+                            <?php foreach ($routes as $route): ?>
+                                <option value="<?php echo $route['id']; ?>" <?php if ($filter_route_id == $route['id']) echo 'selected'; ?>>
+                                    <?php echo htmlspecialchars($route['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="date" name="start_date" id="start_date" class="form-control" value="<?php echo htmlspecialchars($filter_start_date); ?>">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input type="date" name="end_date" id="end_date" class="form-control" value="<?php echo htmlspecialchars($filter_end_date); ?>">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="start_date">Start Date</label>
-                    <input type="date" name="start_date" id="start_date" class="form-control" value="<?php echo htmlspecialchars($filter_start_date); ?>">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="end_date">End Date</label>
-                    <input type="date" name="end_date" id="end_date" class="form-control" value="<?php echo htmlspecialchars($filter_end_date); ?>">
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>&nbsp;</label>
-                    <button type="submit" class="btn btn-primary btn-block">Filter</button>
-                </div>
-            </div>
+            </form>
         </div>
-    </form>
+    </div>
 
-    <!-- Report Table -->
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Ad Title</th>
-                <th>Advertiser</th>
-                <th>Route</th>
-                <th>Played At</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (empty($ad_logs)): ?>
-                <tr>
-                    <td colspan="4" class="text-center">No records found for the selected filters.</td>
-                </tr>
-            <?php else: ?>
-                <?php foreach ($ad_logs as $log): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($log['ad_title']); ?></td>
-                    <td><?php echo htmlspecialchars($log['advertiser']); ?></td>
-                    <td><?php echo htmlspecialchars($log['route_name']); ?></td>
-                    <td><?php echo $log['played_at']; ?></td>
-                </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </tbody>
-    </table>
-     <a href="../dashboard.php" class="btn btn-secondary mt-3">Back to dashboard</a>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Ad Title</th>
+                        <th>Advertiser</th>
+                        <th>Route</th>
+                        <th>Played At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($ad_logs)): ?>
+                        <tr>
+                            <td colspan="4" class="text-center">No records found for the selected filters.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($ad_logs as $log): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($log['ad_title']); ?></td>
+                            <td><?php echo htmlspecialchars($log['advertiser']); ?></td>
+                            <td><?php echo htmlspecialchars($log['route_name']); ?></td>
+                            <td><?php echo $log['played_at']; ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-</body>
-</html>
+<?php
+require_once 'includes/footer.php';
+?>

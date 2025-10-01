@@ -13,51 +13,46 @@ $sql = "SELECT v.*, r.name as route_name FROM vehicles v LEFT JOIN routes r ON v
 $result = mysqli_query($link, $sql);
 $vehicles = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-$sql = "SELECT * FROM routes";
-$result = mysqli_query($link, $sql);
-$routes = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$sql_routes = "SELECT * FROM routes";
+$result_routes = mysqli_query($link, $sql_routes);
+$routes = mysqli_fetch_all($result_routes, MYSQLI_ASSOC);
+
+require_once 'includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Vehicle Management</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</head>
-<body>
-
-<div class="container mt-5">
-    <h2>Vehicle Management</h2>
+<div class="container-fluid">
+    <h2 class="h2 mb-4">Vehicle Management</h2>
     <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addVehicleModal">Add New Vehicle</button>
 
-    <table class="table table-bordered" id="vehiclesTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Route</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($vehicles as $vehicle): ?>
-            <tr id="vehicle-<?php echo $vehicle['id']; ?>">
-                <td><?php echo $vehicle['id']; ?></td>
-                <td class="name"><?php echo htmlspecialchars($vehicle['name']); ?></td>
-                <td class="route_name"><?php echo htmlspecialchars($vehicle['route_name']); ?></td>
-                <td class="status"><?php echo htmlspecialchars($vehicle['status']); ?></td>
-                <td>
-                    <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $vehicle['id']; ?>" data-name="<?php echo htmlspecialchars($vehicle['name']); ?>" data-route_id="<?php echo $vehicle['route_id']; ?>" data-status="<?php echo $vehicle['status']; ?>">Edit</button>
-                    <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $vehicle['id']; ?>">Delete</button>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered table-striped" id="vehiclesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Route</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($vehicles as $vehicle): ?>
+                    <tr id="vehicle-<?php echo $vehicle['id']; ?>">
+                        <td><?php echo $vehicle['id']; ?></td>
+                        <td class="name"><?php echo htmlspecialchars($vehicle['name']); ?></td>
+                        <td class="route_name"><?php echo htmlspecialchars($vehicle['route_name']); ?></td>
+                        <td class="status"><?php echo htmlspecialchars($vehicle['status']); ?></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $vehicle['id']; ?>" data-name="<?php echo htmlspecialchars($vehicle['name']); ?>" data-route_id="<?php echo $vehicle['route_id']; ?>" data-status="<?php echo $vehicle['status']; ?>">Edit</button>
+                            <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $vehicle['id']; ?>">Delete</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- Add Vehicle Modal -->
@@ -161,11 +156,11 @@ $(document).ready(function() {
                         </tr>`;
                     $('#vehiclesTable tbody').append(newRow);
                 } else {
-                    console.error('Error: ' + response.message);
+                    console.error('Error adding vehicle: ' + response.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                console.error('AJAX error on add vehicle: ' + textStatus + ' - ' + errorThrown);
                 console.error(jqXHR.responseText);
             }
         });
@@ -173,7 +168,7 @@ $(document).ready(function() {
 
     // Edit vehicle - show modal
     $('#vehiclesTable').on('click', '.edit-btn', function() {
-        console.log("Edit button clicked.");
+        console.log("Edit button clicked for vehicle ID:", $(this).data('id'));
         $('#edit-id').val($(this).data('id'));
         $('#edit-name').val($(this).data('name'));
         $('#edit-route_id').val($(this).data('route_id'));
@@ -201,11 +196,11 @@ $(document).ready(function() {
                     row.find('.route_name').text($('#edit-route_id option:selected').text());
                     row.find('.status').text($('#edit-status').val());
                 } else {
-                    console.error(response.message);
+                    console.error('Error updating vehicle: ' + response.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                console.error('AJAX error on update vehicle: ' + textStatus + ' - ' + errorThrown);
                 console.error(jqXHR.responseText);
             }
         });
@@ -213,7 +208,7 @@ $(document).ready(function() {
 
     // Delete vehicle
     $('#vehiclesTable').on('click', '.delete-btn', function() {
-        console.log("Delete button clicked.");
+        console.log("Delete button clicked for vehicle ID:", $(this).data('id'));
         if (confirm('Are you sure you want to delete this vehicle?')) {
             var id = $(this).data('id');
             $.ajax({
@@ -226,11 +221,11 @@ $(document).ready(function() {
                     if (response.success) {
                         $('#vehicle-' + id).remove();
                     } else {
-                        console.error(response.message);
+                        console.error('Error deleting vehicle: ' + response.message);
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                    console.error('AJAX error on delete vehicle: ' + textStatus + ' - ' + errorThrown);
                     console.error(jqXHR.responseText);
                 }
             });
@@ -239,5 +234,6 @@ $(document).ready(function() {
 });
 </script>
 
-</body>
-</html>
+<?php
+require_once 'includes/footer.php';
+?>

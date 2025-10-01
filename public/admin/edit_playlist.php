@@ -42,43 +42,41 @@ $sql_available = "SELECT id, title, artist
                   )";
 $result_available = mysqli_query($link, $sql_available);
 $available_mp3s = mysqli_fetch_all($result_available, MYSQLI_ASSOC);
+
+require_once 'includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Playlist - <?php echo htmlspecialchars($playlist['name']); ?></title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <style>
-        #playlist-items-list { list-style-type: none; margin: 0; padding: 0; }
-        #playlist-items-list li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 50px; }
-        #playlist-items-list li span { position: absolute; margin-left: -1.3em; }
-        .sortable-placeholder { border: 1px dashed #ccc; background: #f8f9fa; height: 50px; }
-    </style>
-</head>
-<body>
+<!-- Custom styles for this page -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+    #playlist-items-list { list-style-type: none; margin: 0; padding: 0; }
+    #playlist-items-list li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.1em; height: 50px; border: 1px solid #ddd; background-color: #fff; }
+    #playlist-items-list li span.badge { font-size: 0.8em; vertical-align: middle; }
+    .sortable-placeholder { border: 1px dashed #ccc; background: #f8f9fa; height: 50px; }
+</style>
 
-<div class="container-fluid mt-5">
-    <h3>Editing Playlist: <?php echo htmlspecialchars($playlist['name']); ?></h3>
+<div class="container-fluid">
+    <h2 class="h2 mb-4">Editing Playlist: <?php echo htmlspecialchars($playlist['name']); ?></h2>
     <a href="playlists.php" class="btn btn-secondary mb-3">Back to Playlists</a>
 
     <div class="row">
         <!-- Current Playlist Items -->
         <div class="col-md-6">
-            <h4>Playlist Items</h4>
             <div class="card">
+                <div class="card-header">
+                    <h4>Playlist Items (Drag to reorder)</h4>
+                </div>
                 <div class="card-body">
                     <ul id="playlist-items-list" class="sortable">
                         <?php if (empty($playlist_items)): ?>
-                            <p>This playlist is empty. Add items from the library on the right.</p>
+                            <p class="text-center">This playlist is empty. Add items from the library on the right.</p>
                         <?php else: ?>
                             <?php foreach ($playlist_items as $item): ?>
                                 <li class="ui-state-default" data-item-id="<?php echo $item['id']; ?>">
-                                    <strong><?php echo htmlspecialchars($item['title']); ?></strong> (<?php echo htmlspecialchars($item['artist']); ?>)
-                                    <span class="badge badge-<?php echo $item['type'] == 'song' ? 'primary' : 'info'; ?>"><?php echo ucfirst($item['type']); ?></span>
-                                    <button class="btn btn-danger btn-sm float-right remove-item-btn" data-item-id="<?php echo $item['id']; ?>">&times;</button>
+                                    <i class="fas fa-grip-vertical"></i>
+                                    <strong><?php echo htmlspecialchars($item['title']); ?></strong> <small>(<?php echo htmlspecialchars($item['artist']); ?>)</small>
+                                    <span class="badge bg-<?php echo $item['type'] == 'song' ? 'primary' : 'info'; ?> ms-2"><?php echo ucfirst($item['type']); ?></span>
+                                    <button class="btn btn-danger btn-sm float-end remove-item-btn" data-item-id="<?php echo $item['id']; ?>">&times;</button>
                                 </li>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -89,41 +87,51 @@ $available_mp3s = mysqli_fetch_all($result_available, MYSQLI_ASSOC);
 
         <!-- Available MP3s Library -->
         <div class="col-md-6">
-            <h4>Available MP3s Library</h4>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Artist</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($available_mp3s as $mp3): ?>
-                        <tr id="mp3-<?php echo $mp3['id']; ?>">
-                            <td><?php echo htmlspecialchars($mp3['title']); ?></td>
-                            <td><?php echo htmlspecialchars($mp3['artist']); ?></td>
-                            <td>
-                                <button class="btn btn-success btn-sm add-item-btn" data-mp3-id="<?php echo $mp3['id']; ?>" data-type="song">Add as Song</button>
-                                <button class="btn btn-warning btn-sm add-item-btn" data-mp3-id="<?php echo $mp3['id']; ?>" data-type="ad">Add as Ad</button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+             <div class="card">
+                <div class="card-header">
+                    <h4>Available MP3s Library</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Artist</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($available_mp3s)): ?>
+                                <tr>
+                                    <td colspan="3" class="text-center">No available MP3s found. Please upload and approve new MP3s to add them to the playlist.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($available_mp3s as $mp3): ?>
+                                    <tr id="mp3-<?php echo $mp3['id']; ?>">
+                                        <td><?php echo htmlspecialchars($mp3['title']); ?></td>
+                                        <td><?php echo htmlspecialchars($mp3['artist']); ?></td>
+                                        <td>
+                                            <button class="btn btn-success btn-sm add-item-btn" data-mp3-id="<?php echo $mp3['id']; ?>" data-type="song">Add as Song</button>
+                                            <button class="btn btn-warning btn-sm add-item-btn" data-mp3-id="<?php echo $mp3['id']; ?>" data-type="ad">Add as Ad</button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<!-- Additional scripts for this page -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
 $(document).ready(function() {
     const playlistId = <?php echo $playlist_id; ?>;
 
-    // Make the playlist items sortable
     $(".sortable").sortable({
         placeholder: "sortable-placeholder",
         update: function(event, ui) {
@@ -142,7 +150,6 @@ $(document).ready(function() {
         }
     }).disableSelection();
 
-    // Add item to playlist
     $('.add-item-btn').on('click', function() {
         var mp3Id = $(this).data('mp3-id');
         var type = $(this).data('type');
@@ -162,7 +169,6 @@ $(document).ready(function() {
         });
     });
 
-    // Remove item from playlist
     $('#playlist-items-list').on('click', '.remove-item-btn', function() {
         if (confirm('Are you sure you want to remove this item from the playlist?')) {
             var itemId = $(this).data('item-id');
@@ -184,5 +190,6 @@ $(document).ready(function() {
 });
 </script>
 
-</body>
-</html>
+<?php
+require_once 'includes/footer.php';
+?>

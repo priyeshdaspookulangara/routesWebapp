@@ -12,48 +12,43 @@ $link = get_db_connection();
 $sql = "SELECT * FROM ad_plans";
 $result = mysqli_query($link, $sql);
 $plans = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+require_once 'includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ad Plan Management</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</head>
-<body>
-
-<div class="container mt-5">
-    <h2>Ad Plan Management</h2>
+<div class="container-fluid">
+    <h2 class="h2 mb-4">Ad Plan Management</h2>
     <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addPlanModal">Add New Plan</button>
 
-    <table class="table table-bordered" id="plansTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Duration (Days)</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($plans as $plan): ?>
-            <tr id="plan-<?php echo $plan['id']; ?>">
-                <td><?php echo $plan['id']; ?></td>
-                <td class="name"><?php echo htmlspecialchars($plan['name']); ?></td>
-                <td class="price"><?php echo htmlspecialchars($plan['price']); ?></td>
-                <td class="duration"><?php echo htmlspecialchars($plan['duration']); ?></td>
-                <td>
-                    <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $plan['id']; ?>" data-name="<?php echo htmlspecialchars($plan['name']); ?>" data-price="<?php echo $plan['price']; ?>" data-duration="<?php echo $plan['duration']; ?>">Edit</button>
-                    <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $plan['id']; ?>">Delete</button>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered table-striped" id="plansTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Duration (Days)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($plans as $plan): ?>
+                    <tr id="plan-<?php echo $plan['id']; ?>">
+                        <td><?php echo $plan['id']; ?></td>
+                        <td class="name"><?php echo htmlspecialchars($plan['name']); ?></td>
+                        <td class="price"><?php echo htmlspecialchars($plan['price']); ?></td>
+                        <td class="duration"><?php echo htmlspecialchars($plan['duration']); ?></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $plan['id']; ?>" data-name="<?php echo htmlspecialchars($plan['name']); ?>" data-price="<?php echo $plan['price']; ?>" data-duration="<?php echo $plan['duration']; ?>">Edit</button>
+                            <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $plan['id']; ?>">Delete</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- Add Plan Modal -->
@@ -176,7 +171,7 @@ $(document).ready(function() {
                     row.find('.price').text($('#edit-price').val());
                     row.find('.duration').text($('#edit-duration').val());
                 } else {
-                    alert(response.message);
+                    alert('Error: ' + response.message);
                 }
             }
         });
@@ -195,7 +190,7 @@ $(document).ready(function() {
                     if (response.success) {
                         $('#plan-' + id).remove();
                     } else {
-                        alert(response.message);
+                        alert('Error: ' + response.message);
                     }
                 }
             });
@@ -204,5 +199,6 @@ $(document).ready(function() {
 });
 </script>
 
-</body>
-</html>
+<?php
+require_once 'includes/footer.php';
+?>

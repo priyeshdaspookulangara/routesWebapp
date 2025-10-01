@@ -25,69 +25,66 @@ $subscriptions = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 // Get today's date to check for expiry
 $today = new DateTime();
+
+require_once 'includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ad Package Expiry List</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-
-<div class="container mt-5">
-    <h2>Ad Package Expiry List</h2>
+<div class="container-fluid">
+    <h2 class="h2 mb-4">Ad Package Expiry List</h2>
     <p>This report shows all active ad subscriptions, sorted by the soonest expiry date.</p>
 
-    <table class="table table-bordered table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th>Ad Provider</th>
-                <th>Campaign Name</th>
-                <th>Subscription Plan</th>
-                <th>Expiry Date</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (empty($subscriptions)): ?>
-                <tr>
-                    <td colspan="5" class="text-center">No active subscriptions found.</td>
-                </tr>
-            <?php else: ?>
-                <?php foreach ($subscriptions as $sub): ?>
-                    <?php
-                        $expiry_date = new DateTime($sub['end_date']);
-                        $interval = $today->diff($expiry_date);
-                        $days_left = (int)$interval->format('%r%a'); // %r gives sign, %a gives total days
-
-                        $row_class = '';
-                        $status_badge = '';
-
-                        if ($days_left < 0) {
-                            $row_class = 'table-secondary';
-                            $status_badge = '<span class="badge badge-dark">Expired</span>';
-                        } elseif ($days_left <= 30) {
-                            $row_class = 'table-warning';
-                            $status_badge = '<span class="badge badge-warning">Expires Soon</span>';
-                        } else {
-                            $status_badge = '<span class="badge badge-success">Active</span>';
-                        }
-                    ?>
-                    <tr class="<?php echo $row_class; ?>">
-                        <td><?php echo htmlspecialchars($sub['company_name']); ?></td>
-                        <td><?php echo htmlspecialchars($sub['campaign_name']); ?></td>
-                        <td><?php echo htmlspecialchars($sub['plan_name']); ?></td>
-                        <td><?php echo $expiry_date->format('Y-m-d'); ?></td>
-                        <td><?php echo $status_badge; ?></td>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Ad Provider</th>
+                        <th>Campaign Name</th>
+                        <th>Subscription Plan</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
                     </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </tbody>
-    </table>
-    <a href="../dashboard.php" class="btn btn-secondary mt-3">Back to Dashboard</a>
+                </thead>
+                <tbody>
+                    <?php if (empty($subscriptions)): ?>
+                        <tr>
+                            <td colspan="5" class="text-center">No active subscriptions found.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($subscriptions as $sub): ?>
+                            <?php
+                                $expiry_date = new DateTime($sub['end_date']);
+                                $interval = $today->diff($expiry_date);
+                                $days_left = (int)$interval->format('%r%a'); // %r gives sign, %a gives total days
+
+                                $row_class = '';
+                                $status_badge = '';
+
+                                if ($days_left < 0) {
+                                    $row_class = 'table-secondary text-muted';
+                                    $status_badge = '<span class="badge bg-dark">Expired</span>';
+                                } elseif ($days_left <= 30) {
+                                    $row_class = 'table-warning';
+                                    $status_badge = '<span class="badge bg-warning text-dark">Expires Soon</span>';
+                                } else {
+                                    $status_badge = '<span class="badge bg-success">Active</span>';
+                                }
+                            ?>
+                            <tr class="<?php echo $row_class; ?>">
+                                <td><?php echo htmlspecialchars($sub['company_name']); ?></td>
+                                <td><?php echo htmlspecialchars($sub['campaign_name']); ?></td>
+                                <td><?php echo htmlspecialchars($sub['plan_name']); ?></td>
+                                <td><?php echo $expiry_date->format('Y-m-d'); ?></td>
+                                <td><?php echo $status_badge; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-</body>
-</html>
+<?php
+require_once 'includes/footer.php';
+?>

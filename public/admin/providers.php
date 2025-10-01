@@ -13,49 +13,44 @@ $sql = "SELECT ap.*, u.name as user_name FROM ad_providers ap JOIN users u ON ap
 $result = mysqli_query($link, $sql);
 $providers = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-$sql = "SELECT * FROM users WHERE role = 'Ad Provider'";
-$result = mysqli_query($link, $sql);
-$users = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$sql_users = "SELECT * FROM users WHERE role = 'Ad Provider'";
+$result_users = mysqli_query($link, $sql_users);
+$users = mysqli_fetch_all($result_users, MYSQLI_ASSOC);
+
+require_once 'includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ad Provider Management</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</head>
-<body>
-
-<div class="container mt-5">
-    <h2>Ad Provider Management</h2>
+<div class="container-fluid">
+    <h2 class="h2 mb-4">Ad Provider Management</h2>
     <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addProviderModal">Add New Provider</button>
 
-    <table class="table table-bordered" id="providersTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Company Name</th>
-                <th>User</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($providers as $provider): ?>
-            <tr id="provider-<?php echo $provider['id']; ?>">
-                <td><?php echo $provider['id']; ?></td>
-                <td class="company_name"><?php echo htmlspecialchars($provider['company_name']); ?></td>
-                <td class="user_name"><?php echo htmlspecialchars($provider['user_name']); ?></td>
-                <td>
-                    <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $provider['id']; ?>" data-company_name="<?php echo htmlspecialchars($provider['company_name']); ?>" data-user_id="<?php echo $provider['user_id']; ?>">Edit</button>
-                    <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $provider['id']; ?>">Delete</button>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered table-striped" id="providersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Company Name</th>
+                        <th>User</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($providers as $provider): ?>
+                    <tr id="provider-<?php echo $provider['id']; ?>">
+                        <td><?php echo $provider['id']; ?></td>
+                        <td class="company_name"><?php echo htmlspecialchars($provider['company_name']); ?></td>
+                        <td class="user_name"><?php echo htmlspecialchars($provider['user_name']); ?></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $provider['id']; ?>" data-company_name="<?php echo htmlspecialchars($provider['company_name']); ?>" data-user_id="<?php echo $provider['user_id']; ?>">Edit</button>
+                            <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $provider['id']; ?>">Delete</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- Add Provider Modal -->
@@ -176,7 +171,7 @@ $(document).ready(function() {
                     row.find('.company_name').text($('#edit-company_name').val());
                     row.find('.user_name').text($('#edit-user_id option:selected').text());
                 } else {
-                    alert(response.message);
+                    alert('Error: ' + response.message);
                 }
             }
         });
@@ -195,7 +190,7 @@ $(document).ready(function() {
                     if (response.success) {
                         $('#provider-' + id).remove();
                     } else {
-                        alert(response.message);
+                        alert('Error: ' + response.message);
                     }
                 }
             });
@@ -204,5 +199,6 @@ $(document).ready(function() {
 });
 </script>
 
-</body>
-</html>
+<?php
+require_once 'includes/footer.php';
+?>

@@ -9,54 +9,48 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 require_once '../../src/db.php';
 $link = get_db_connection();
 
-
 $sql = "SELECT * FROM users";
 $result = mysqli_query($link, $sql);
 $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+require_once 'includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>User Management</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</head>
-<body>
-
-<div class="container mt-5">
-    <h2>User Management</h2>
+<div class="container-fluid">
+    <h2 class="h2 mb-4">User Management</h2>
     <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addUserModal">Add New User</button>
 
-    <table class="table table-bordered" id="usersTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($users as $user): ?>
-            <tr id="user-<?php echo $user['id']; ?>">
-                <td><?php echo $user['id']; ?></td>
-                <td class="name"><?php echo htmlspecialchars($user['name']); ?></td>
-                <td class="email"><?php echo htmlspecialchars($user['email']); ?></td>
-                <td class="role"><?php echo htmlspecialchars($user['role']); ?></td>
-                <td class="status"><?php echo htmlspecialchars($user['status']); ?></td>
-                <td>
-                    <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $user['id']; ?>" data-name="<?php echo htmlspecialchars($user['name']); ?>" data-email="<?php echo htmlspecialchars($user['email']); ?>" data-role="<?php echo $user['role']; ?>" data-status="<?php echo $user['status']; ?>">Edit</button>
-                    <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $user['id']; ?>">Delete</button>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered table-striped" id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($users as $user): ?>
+                    <tr id="user-<?php echo $user['id']; ?>">
+                        <td><?php echo $user['id']; ?></td>
+                        <td class="name"><?php echo htmlspecialchars($user['name']); ?></td>
+                        <td class="email"><?php echo htmlspecialchars($user['email']); ?></td>
+                        <td class="role"><?php echo htmlspecialchars($user['role']); ?></td>
+                        <td class="status"><?php echo htmlspecialchars($user['status']); ?></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $user['id']; ?>" data-name="<?php echo htmlspecialchars($user['name']); ?>" data-email="<?php echo htmlspecialchars($user['email']); ?>" data-role="<?php echo $user['role']; ?>" data-status="<?php echo $user['status']; ?>">Edit</button>
+                            <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $user['id']; ?>">Delete</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- Add User Modal -->
@@ -140,6 +134,8 @@ $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
 </div>
 
 <script>
+// NOTE: This script assumes jQuery is loaded in the footer.
+// It might be better to move all page-specific scripts to the footer as well.
 $(document).ready(function() {
     console.log("User management script loaded and document is ready.");
 
@@ -252,5 +248,6 @@ $(document).ready(function() {
 });
 </script>
 
-</body>
-</html>
+<?php
+require_once 'includes/footer.php';
+?>

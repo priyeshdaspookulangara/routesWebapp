@@ -18,66 +18,61 @@ $playlists = mysqli_fetch_all($result, MYSQLI_ASSOC);
 $sql_routes = "SELECT * FROM routes";
 $result_routes = mysqli_query($link, $sql_routes);
 $routes = mysqli_fetch_all($result_routes, MYSQLI_ASSOC);
+
+require_once 'includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Playlist Management</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</head>
-<body>
+<div class="container-fluid">
+    <h2 class="h2 mb-4">Playlist Management</h2>
+    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addPlaylistModal">Add New Playlist</button>
 
-<div class="container mt-5">
-    <h2>Playlist Management</h2>
-    <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addPlaylistModal">Add New Playlist</button>
-
-    <table class="table table-bordered" id="playlistsTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Playlist Name</th>
-                <th>Assigned Route</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($playlists as $playlist): ?>
-            <tr id="playlist-<?php echo $playlist['id']; ?>">
-                <td><?php echo $playlist['id']; ?></td>
-                <td class="name"><?php echo htmlspecialchars($playlist['name']); ?></td>
-                <td class="route_name"><?php echo htmlspecialchars($playlist['route_name'] ?? 'None'); ?></td>
-                <td>
-                    <a href="edit_playlist.php?id=<?php echo $playlist['id']; ?>" class="btn btn-info btn-sm">Edit Items</a>
-                    <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $playlist['id']; ?>" data-name="<?php echo htmlspecialchars($playlist['name']); ?>" data-route_id="<?php echo $playlist['route_id']; ?>">Edit Name/Route</button>
-                    <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $playlist['id']; ?>">Delete</button>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered table-striped" id="playlistsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Playlist Name</th>
+                        <th>Assigned Route</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($playlists as $playlist): ?>
+                    <tr id="playlist-<?php echo $playlist['id']; ?>">
+                        <td><?php echo $playlist['id']; ?></td>
+                        <td class="name"><?php echo htmlspecialchars($playlist['name']); ?></td>
+                        <td class="route_name"><?php echo htmlspecialchars($playlist['route_name'] ?? 'None'); ?></td>
+                        <td>
+                            <a href="edit_playlist.php?id=<?php echo $playlist['id']; ?>" class="btn btn-info btn-sm">Manage Songs/Ads</a>
+                            <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $playlist['id']; ?>" data-name="<?php echo htmlspecialchars($playlist['name']); ?>" data-route_id="<?php echo $playlist['route_id']; ?>">Edit Details</button>
+                            <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $playlist['id']; ?>">Delete</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- Add Playlist Modal -->
-<div class="modal fade" id="addPlaylistModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="addPlaylistModal" tabindex="-1" aria-labelledby="addPlaylistModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add Playlist</h5>
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h5 class="modal-title" id="addPlaylistModalLabel">Add Playlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="addPlaylistForm">
-                    <div class="form-group">
-                        <label>Playlist Name</label>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Playlist Name</label>
                         <input type="text" name="name" class="form-control" required>
                     </div>
-                    <div class="form-group">
-                        <label>Assign to Route</label>
-                        <select name="route_id" class="form-control">
+                    <div class="mb-3">
+                        <label for="route_id" class="form-label">Assign to Route</label>
+                        <select name="route_id" class="form-select">
                             <option value="">None</option>
                             <?php foreach ($routes as $route): ?>
                             <option value="<?php echo $route['id']; ?>"><?php echo htmlspecialchars($route['name']); ?></option>
@@ -92,23 +87,23 @@ $routes = mysqli_fetch_all($result_routes, MYSQLI_ASSOC);
 </div>
 
 <!-- Edit Playlist Modal -->
-<div class="modal fade" id="editPlaylistModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="editPlaylistModal" tabindex="-1" aria-labelledby="editPlaylistModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Playlist</h5>
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h5 class="modal-title" id="editPlaylistModalLabel">Edit Playlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="editPlaylistForm">
                     <input type="hidden" name="id" id="edit-id">
-                    <div class="form-group">
-                        <label>Playlist Name</label>
+                    <div class="mb-3">
+                        <label for="edit-name" class="form-label">Playlist Name</label>
                         <input type="text" name="name" id="edit-name" class="form-control" required>
                     </div>
-                    <div class="form-group">
-                        <label>Assign to Route</label>
-                        <select name="route_id" id="edit-route_id" class="form-control">
+                    <div class="mb-3">
+                        <label for="edit-route_id" class="form-label">Assign to Route</label>
+                        <select name="route_id" id="edit-route_id" class="form-select">
                             <option value="">None</option>
                             <?php foreach ($routes as $route): ?>
                             <option value="<?php echo $route['id']; ?>"><?php echo htmlspecialchars($route['name']); ?></option>
@@ -134,7 +129,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
-                    location.reload(); // Easiest way to show the new playlist
+                    location.reload();
                 } else {
                     alert('Error: ' + response.message);
                 }
@@ -147,7 +142,8 @@ $(document).ready(function() {
         $('#edit-id').val($(this).data('id'));
         $('#edit-name').val($(this).data('name'));
         $('#edit-route_id').val($(this).data('route_id'));
-        $('#editPlaylistModal').modal('show');
+        var modal = new bootstrap.Modal(document.getElementById('editPlaylistModal'));
+        modal.show();
     });
 
     // Update playlist
@@ -160,7 +156,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
-                    location.reload(); // Easiest way to reflect changes
+                    location.reload();
                 } else {
                     alert('Error: ' + response.message);
                 }
@@ -190,5 +186,6 @@ $(document).ready(function() {
 });
 </script>
 
-</body>
-</html>
+<?php
+require_once 'includes/footer.php';
+?>

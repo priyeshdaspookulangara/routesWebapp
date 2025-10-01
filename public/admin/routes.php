@@ -12,44 +12,39 @@ $link = get_db_connection();
 $sql = "SELECT * FROM routes";
 $result = mysqli_query($link, $sql);
 $routes = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+require_once 'includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Route Management</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</head>
-<body>
-
-<div class="container mt-5">
-    <h2>Route Management</h2>
+<div class="container-fluid">
+    <h2 class="h2 mb-4">Route Management</h2>
     <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addRouteModal">Add New Route</button>
 
-    <table class="table table-bordered" id="routesTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($routes as $route): ?>
-            <tr id="route-<?php echo $route['id']; ?>">
-                <td><?php echo $route['id']; ?></td>
-                <td class="name"><?php echo htmlspecialchars($route['name']); ?></td>
-                <td>
-                    <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $route['id']; ?>" data-name="<?php echo htmlspecialchars($route['name']); ?>">Edit</button>
-                    <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $route['id']; ?>">Delete</button>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered table-striped" id="routesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($routes as $route): ?>
+                    <tr id="route-<?php echo $route['id']; ?>">
+                        <td><?php echo $route['id']; ?></td>
+                        <td class="name"><?php echo htmlspecialchars($route['name']); ?></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm edit-btn" data-id="<?php echo $route['id']; ?>" data-name="<?php echo htmlspecialchars($route['name']); ?>">Edit</button>
+                            <button class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $route['id']; ?>">Delete</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <!-- Add Route Modal -->
@@ -125,11 +120,11 @@ $(document).ready(function() {
                         </tr>`;
                     $('#routesTable tbody').append(newRow);
                 } else {
-                    console.error('Error: ' + response.message);
+                    console.error('Error adding route: ' + response.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                console.error('AJAX error on add route: ' + textStatus + ' - ' + errorThrown);
                 console.error(jqXHR.responseText);
             }
         });
@@ -137,7 +132,7 @@ $(document).ready(function() {
 
     // Edit route - show modal
     $('#routesTable').on('click', '.edit-btn', function() {
-        console.log("Edit button clicked.");
+        console.log("Edit button clicked for route ID:", $(this).data('id'));
         $('#edit-id').val($(this).data('id'));
         $('#edit-name').val($(this).data('name'));
         $('#editRouteModal').modal('show');
@@ -161,11 +156,11 @@ $(document).ready(function() {
                     var row = $('#route-' + id);
                     row.find('.name').text($('#edit-name').val());
                 } else {
-                    console.error(response.message);
+                    console.error('Error updating route: ' + response.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                console.error('AJAX error on update route: ' + textStatus + ' - ' + errorThrown);
                 console.error(jqXHR.responseText);
             }
         });
@@ -173,7 +168,7 @@ $(document).ready(function() {
 
     // Delete route
     $('#routesTable').on('click', '.delete-btn', function() {
-        console.log("Delete button clicked.");
+        console.log("Delete button clicked for route ID:", $(this).data('id'));
         if (confirm('Are you sure you want to delete this route?')) {
             var id = $(this).data('id');
             $.ajax({
@@ -186,11 +181,11 @@ $(document).ready(function() {
                     if (response.success) {
                         $('#route-' + id).remove();
                     } else {
-                        console.error(response.message);
+                        console.error('Error deleting route: ' + response.message);
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('An AJAX error occurred: ' + textStatus + ' - ' + errorThrown);
+                    console.error('AJAX error on delete route: ' + textStatus + ' - ' + errorThrown);
                     console.error(jqXHR.responseText);
                 }
             });
@@ -199,5 +194,6 @@ $(document).ready(function() {
 });
 </script>
 
-</body>
-</html>
+<?php
+require_once 'includes/footer.php';
+?>
