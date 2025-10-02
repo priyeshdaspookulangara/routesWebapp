@@ -18,6 +18,7 @@ $breadcrumbs = [
     'vehicles' => [['name' => 'Dashboard', 'link' => 'dashboard.php'], ['name' => 'Vehicles', 'link' => 'vehicles.php']],
     'plans' => [['name' => 'Dashboard', 'link' => 'dashboard.php'], ['name' => 'Ad Plans', 'link' => 'plans.php']],
     'providers' => [['name' => 'Dashboard', 'link' => 'dashboard.php'], ['name' => 'Ad Providers', 'link' => 'providers.php']],
+    'subscriptions' => [['name' => 'Dashboard', 'link' => 'dashboard.php'], ['name' => 'Subscriptions', 'link' => 'subscriptions.php']],
     'mp3s' => [['name' => 'Dashboard', 'link' => 'dashboard.php'], ['name' => 'MP3s', 'link' => 'mp3s.php']],
     'playlists' => [['name' => 'Dashboard', 'link' => 'dashboard.php'], ['name' => 'Playlists', 'link' => 'playlists.php']],
     'edit_playlist' => [['name' => 'Dashboard', 'link' => 'dashboard.php'], ['name' => 'Playlists', 'link' => 'playlists.php'], ['name' => 'Edit Playlist', 'link' => '#']],
@@ -79,6 +80,7 @@ $currentBreadcrumbs = isset($breadcrumbs[$currentPage]) ? $breadcrumbs[$currentP
             <li class="nav-item"><a href="vehicles.php" class="nav-link <?php echo isActive('vehicles', $currentPage); ?>"><i class="fas fa-bus me-2"></i>Vehicles</a></li>
             <li class="nav-item"><a href="plans.php" class="nav-link <?php echo isActive('plans', $currentPage); ?>"><i class="fas fa-tags me-2"></i>Ad Plans</a></li>
             <li class="nav-item"><a href="providers.php" class="nav-link <?php echo isActive('providers', $currentPage); ?>"><i class="fas fa-building me-2"></i>Ad Providers</a></li>
+            <li class="nav-item"><a href="subscriptions.php" class="nav-link <?php echo isActive('subscriptions', $currentPage); ?>"><i class="fas fa-file-invoice-dollar me-2"></i>Subscriptions</a></li>
             <li class="nav-item"><a href="mp3s.php" class="nav-link <?php echo isActive('mp3s', $currentPage); ?>"><i class="fas fa-music me-2"></i>MP3s</a></li>
             <li class="nav-item"><a href="playlists.php" class="nav-link <?php echo isActive(['playlists', 'edit_playlist'], $currentPage); ?>"><i class="fas fa-list-ol me-2"></i>Playlists</a></li>
             <li class="nav-item"><a href="reports.php" class="nav-link <?php echo isActive('reports', $currentPage); ?>"><i class="fas fa-chart-bar me-2"></i>Ad Reports</a></li>
